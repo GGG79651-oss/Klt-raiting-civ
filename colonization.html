@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Путь к независимости</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700;800&family=PT+Mono&display=swap" rel="stylesheet">
+<style>
+/* Layout: sticky "судовой журнал" header with the year slider; the stage card below; standing rules, route overview and numbers after. */
+:root{
+  --bg:#eceee7; --panel:#fafaf5; --sunk:#e2e6dc; --ink:#13242c; --muted:#53666a; --line:#c6cec3;
+  --brass:#8a5f10; --brass-soft:#f2e6c8; --on-brass:#fffaf0;
+  --p-trade:#a97810; --p-exp:#2c7a52; --p-prod:#a5561f; --p-army:#2d5d9b; --p-rev:#b3352f;
+  --f-display:"Alegreya SC", Georgia, "Times New Roman", serif;
+  --f-body:"Alegreya Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --f-mono:"PT Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1b22; --panel:#13262e; --sunk:#0a151a; --ink:#ece2cb; --muted:#97a9a6; --line:#26404a;
+    --brass:#d6a64b; --brass-soft:#28281d; --on-brass:#15130c;
+    --p-trade:#d6a64b; --p-exp:#68b98c; --p-prod:#d88b52; --p-army:#77a4df; --p-rev:#e2625b;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1b22; --panel:#13262e; --sunk:#0a151a; --ink:#ece2cb; --muted:#97a9a6; --line:#26404a;
+  --brass:#d6a64b; --brass-soft:#28281d; --on-brass:#15130c;
+  --p-trade:#d6a64b; --p-exp:#68b98c; --p-prod:#d88b52; --p-army:#77a4df; --p-rev:#e2625b;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+/* ---------- sticky header ---------- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px 8px}
+.top-in{max-width:680px;margin:0 auto;display:grid;gap:4px}
+.kicker{font-family:var(--f-display);font-size:13px;letter-spacing:.08em;color:var(--muted)}
+.hrow{display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px}
+.hleft{min-width:0}
+.eyebrow{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.year{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.year b{font-family:var(--f-display);font-weight:800;font-size:46px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.year span{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.htitle{font-weight:700;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav{display:flex;gap:8px}
+.nav button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;cursor:pointer}
+.nav button:disabled{opacity:.35;cursor:default}
+.nav button:not(:disabled):active{transform:translateY(1px)}
+
+.slider{position:relative;height:40px;margin-top:4px}
+.track{position:absolute;left:14px;right:14px;top:50%;height:8px;margin-top:-4px;border-radius:4px;opacity:.85}
+.ticks{position:absolute;left:14px;right:14px;top:50%;height:0}
+.ticks i{position:absolute;top:-9px;width:2px;height:18px;margin-left:-1px;background:var(--ink);opacity:.45;border-radius:1px}
+.slider input{position:absolute;inset:0;width:100%;height:100%;margin:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer;touch-action:pan-y}
+.slider input::-webkit-slider-runnable-track{height:40px;background:transparent}
+.slider input::-moz-range-track{height:40px;background:transparent}
+.slider input::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;margin-top:6px;border-radius:50%;background:var(--panel);border:3px solid var(--brass);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.slider input::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--panel);border:3px solid var(--brass);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.ends{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:12px;color:var(--muted);padding:0 4px}
+
+/* ---------- page ---------- */
+.wrap{max-width:680px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px;display:grid;gap:22px}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 16px 20px;display:grid;gap:18px}
+.shead{display:grid;gap:6px}
+.shead h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.1;text-wrap:balance}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.prog{font-family:var(--f-mono);font-size:13px;white-space:nowrap}
+.goal{margin:0;font-size:17px}
+
+.mnemo{border:1.5px dashed var(--brass);border-radius:12px;padding:12px 14px;background:var(--brass-soft);display:grid;gap:2px}
+.mnemo small{font-family:var(--f-display);font-size:13px;letter-spacing:.1em;color:var(--brass)}
+.mnemo p{margin:0;font-weight:800;font-size:19px;line-height:1.3}
+.mnemo span{font-size:14px;color:var(--muted)}
+
+h2{margin:0 0 8px;font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.09em;color:var(--muted)}
+.blk{display:grid}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.chain .arr{color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px 6px 8px;border-radius:999px;background:var(--sunk);border:1px solid var(--line);font-size:15px;font-weight:500}
+.chip .ic{width:18px;height:18px;color:var(--brass)}
+.chip em{font-style:normal;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.steps li label{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start;padding:8px 4px;border-radius:8px;cursor:pointer}
+.steps li label:active{background:var(--sunk)}
+.steps input{-webkit-appearance:none;appearance:none;width:22px;height:22px;margin:1px 0 0;border:2px solid var(--line);border-radius:6px;background:var(--panel);display:grid;place-items:center;cursor:pointer}
+.steps input:checked{background:var(--brass);border-color:var(--brass)}
+.steps input:checked::after{content:"";width:6px;height:11px;border:solid var(--on-brass);border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+.steps input:checked + span{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.steps span b{font-weight:700}
+
+.list{display:grid;gap:8px}
+.row{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start}
+.row .ic{color:var(--brass);margin-top:2px}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.fact{background:var(--sunk);border-radius:10px;padding:10px 12px;display:grid;gap:2px}
+.fact b{font-family:var(--f-mono);font-size:20px;font-weight:400;font-variant-numeric:tabular-nums}
+.fact span{font-size:14px;color:var(--muted);line-height:1.3}
+
+.target{border-top:1px solid var(--line);padding-top:16px;display:grid;gap:14px}
+.cities{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.city{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:6px;align-content:start}
+.city h3{margin:0 0 2px;font-size:16px;font-weight:800;display:flex;justify-content:space-between;gap:8px}
+.city h3 small{font-weight:500;color:var(--muted);font-size:13px}
+.ros{display:grid;grid-template-columns:20px 1fr auto;gap:8px;align-items:center;font-size:15px}
+.ros .ic{width:18px;height:18px;color:var(--brass)}
+.ros b{font-family:var(--f-mono);font-weight:400;font-variant-numeric:tabular-nums}
+.ros.opt{color:var(--muted)}
+.ros.hd{grid-template-columns:1fr;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:6px}
+.tnote{margin:0;font-size:15px;color:var(--muted)}
+
+/* ---------- reference sections ---------- */
+.sec{display:grid;gap:10px}
+.sec > h2{margin:0;font-size:17px;color:var(--ink)}
+.rules{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.rules li{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start}
+.rules .badge{width:34px;height:34px;border-radius:50%;background:var(--sunk);display:grid;place-items:center;color:var(--brass)}
+.rules p{margin:0}
+.rules p b{display:block}
+.rules p span{color:var(--muted);font-size:15px}
+
+.route{list-style:none;margin:0;padding:0;display:grid;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+.route li + li{border-top:1px solid var(--line)}
+.route button{width:100%;display:grid;grid-template-columns:auto 10px 1fr;gap:10px;align-items:center;padding:12px 14px;background:none;border:0;text-align:left;cursor:pointer}
+.route button[aria-current="step"]{background:var(--brass-soft)}
+.route .yr{font-family:var(--f-mono);font-size:13px;color:var(--muted);width:78px}
+.route .nm{font-weight:700}
+
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.foot button{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 14px;cursor:pointer}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/><path d="M12 3v2"/></symbol>
+  <symbol id="fish" viewBox="0 0 24 24"><path d="M3 12c3-4 8-5 12-3l4-3v12l-4-3c-4 2-9 1-12-3z"/><circle cx="8" cy="11" r=".9"/></symbol>
+  <symbol id="hammer" viewBox="0 0 24 24"><path d="M13 3l7 7-2.5 2.5-7-7z"/><path d="M13.5 8.5L4 18a1.4 1.4 0 0 0 2 2l9.5-9.5"/></symbol>
+  <symbol id="axe" viewBox="0 0 24 24"><path d="M5 20L15 10"/><path d="M12.5 5.5c3-1.5 6.5-.5 8 2.5l-4.5 4.5c-.8-2-2-3.2-4-4z"/></symbol>
+  <symbol id="log" viewBox="0 0 24 24"><path d="M5 8h13a3 4 0 0 1 0 8H5a3 4 0 0 1 0-8z"/><ellipse cx="18" cy="12" rx="1.5" ry="2.2"/></symbol>
+  <symbol id="ship" viewBox="0 0 24 24"><path d="M3 16h18l-2.5 4h-13z"/><path d="M12 3v13"/><path d="M12 4l6 9h-6"/><path d="M12 6l-5 7h5"/></symbol>
+  <symbol id="musket" viewBox="0 0 24 24"><path d="M2.5 17.5L19 6"/><path d="M14 9.5l2.8 3.6-2.2 1.4-2.2-3.3"/><path d="M19 6l2.5-1.5"/></symbol>
+  <symbol id="cannon" viewBox="0 0 24 24"><circle cx="8" cy="16" r="3.5"/><path d="M9.5 12.8L20 7l1.5 3-10 5"/><path d="M3.5 20.5h9"/></symbol>
+  <symbol id="quill" viewBox="0 0 24 24"><path d="M20 4C13 5 8.5 10 6.5 18"/><path d="M20 4c-1 6-5 10-11 11"/><path d="M4 20l2.5-2"/></symbol>
+  <symbol id="pick" viewBox="0 0 24 24"><path d="M3 8.5c5-4 13-4 18 0"/><path d="M12 5.5V21"/></symbol>
+  <symbol id="coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.5"/></symbol>
+  <symbol id="medic" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="person" viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.2"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></symbol>
+  <symbol id="house" viewBox="0 0 24 24"><path d="M4 11l8-6 8 6"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/></symbol>
+  <symbol id="hall" viewBox="0 0 24 24"><path d="M3 9l9-5 9 5"/><path d="M5 9v10M9.5 9v10M14.5 9v10M19 9v10"/><path d="M3 20h18"/></symbol>
+  <symbol id="pier" viewBox="0 0 24 24"><path d="M3 10h18"/><path d="M6 10v7M12 10v7M18 10v7"/><path d="M3 19c2 1.2 4 1.2 6 0s4-1.2 6 0 4 1.2 6 0"/></symbol>
+  <symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></symbol>
+  <symbol id="crop" viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 14c-4 0-6-2-6-6 4 0 6 2 6 6z"/><path d="M12 10c0-4 2-6 6-6 0 4-2 6-6 6z"/></symbol>
+  <symbol id="factory" viewBox="0 0 24 24"><path d="M3 20V10l5 3v-3l5 3V5h4v15z"/><path d="M3 20h18"/></symbol>
+  <symbol id="flag" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></symbol>
+  <symbol id="shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></symbol>
+  <symbol id="star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
+  <symbol id="palace" viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M5 20v-8h14v8"/><path d="M12 4l7 8H5z"/><path d="M9 20v-4h6v4"/></symbol>
+  <symbol id="tools" viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z"/></symbol>
+  <symbol id="tipi" viewBox="0 0 24 24"><path d="M12 4L4 20h16z"/><path d="M12 4l-2.5-2M12 4l2.5-2"/><path d="M10 20l2-5 2 5"/></symbol>
+  <symbol id="barrel" viewBox="0 0 24 24"><path d="M7 4h10c1.5 3 1.5 13 0 16H7c-1.5-3-1.5-13 0-16z"/><path d="M6 9h12M6 15h12"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="chev-l" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="chev-r" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="top-in">
+    <div class="kicker">Colonization · план до независимости</div>
+    <div class="hrow">
+      <div class="hleft">
+        <div class="eyebrow"><span class="dot" id="phDot"></span><span id="phName">Торговля</span><span>·</span><span id="stNo">Этап 1/9</span></div>
+        <div class="year"><b id="yr">1495</b><span id="yrRange">1495–1505</span></div>
+      </div>
+      <div class="nav">
+        <button type="button" id="prev" aria-label="Предыдущий этап"><svg class="ic"><use href="#chev-l"/></svg></button>
+        <button type="button" id="next" aria-label="Следующий этап"><svg class="ic"><use href="#chev-r"/></svg></button>
+      </div>
+    </div>
+    <div class="htitle" id="hTitle">Высадка и первый город</div>
+    <div class="slider">
+      <div class="track" id="track"></div>
+      <div class="ticks" id="ticks"></div>
+      <input type="range" id="rng" min="1495" max="1690" step="5" value="1495" aria-label="Год">
+    </div>
+    <div class="ends"><span>1495</span><span>1690</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="stage" id="card" aria-live="polite"></article>
+
+  <section class="sec" aria-labelledby="h-rules">
+    <h2 id="h-rules">Красная нить через всю игру</h2>
+    <ul class="rules">
+      <li><span class="badge"><svg class="ic"><use href="#ship"/></svg></span><p><b>Торговля не останавливается</b><span>С первого хода до победы. Сначала продаём оружие индейцам, потом скупаем у них товары и перепродаём в Европе.</span></p></li>
+      <li><span class="badge"><svg class="ic"><use href="#clock"/></svg></span><p><b>Порядок важнее годов</b><span>Годы — ориентир. Успел раньше — переходи к следующему этапу. Отстал — без паники, нагонишь дальше. Главное — не терять ходы.</span></p></li>
+      <li><span class="badge"><svg class="ic"><use href="#person"/></svg></span><p><b>В городе никого лишнего</b><span>Каждый человек либо добывает, либо производит, либо даёт колокола. Работник ест 2 еды за ход.</span></p></li>
+      <li><span class="badge"><svg class="ic"><use href="#tipi"/></svg></span><p><b>Учим у индейцев</b><span>Каждый бесплатно обученный специалист экономит 1000–2000. Чтобы узнать профессию, к деревне нужно зайти и поздороваться.</span></p></li>
+      <li><span class="badge"><svg class="ic"><use href="#tools"/></svg></span><p><b>Инструменты — из Европы своим кораблём</b><span>Докупка в городе обходится вдвое дороже.</span></p></li>
+    </ul>
+  </section>
+
+  <section class="sec" aria-labelledby="h-route">
+    <h2 id="h-route">Весь путь</h2>
+    <ol class="route" id="route"></ol>
+  </section>
+
+  <section class="sec" aria-labelledby="h-nums">
+    <h2 id="h-nums">Цифры, которые держим в голове</h2>
+    <div class="nums">
+      <div class="fact"><b>15</b><span>дерева первым колонистом</span></div>
+      <div class="fact"><b>1300</b><span>резерв на новую партию оружия</span></div>
+      <div class="fact"><b>2</b><span>клетки под каждый ресурс</span></div>
+      <div class="fact"><b>2 еды</b><span>съедает работник за ход</span></div>
+      <div class="fact"><b>×2 / ×1,5</b><span>опытный специалист / обычный фермер</span></div>
+      <div class="fact"><b>+25…30</b><span>двухкомпонентные к 1620</span></div>
+      <div class="fact"><b>+50</b><span>двухкомпонентные к 1640</span></div>
+      <div class="fact"><b>2·2·3</b><span>клетки · опытные · цех = +50</span></div>
+      <div class="fact"><b>12–13 + 2</b><span>пехоты и пушек на город</span></div>
+      <div class="fact"><b>50</b><span>оружия на одного ополченца</span></div>
+      <div class="fact"><b>10 / 2</b><span>защиты: пехота / житель</span></div>
+      <div class="fact"><b>10%</b><span>лечит медик в гарнизоне за ход</span></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>Отметки сохраняются на этом устройстве.</span>
+    <button type="button" id="reset">Сбросить отметки</button>
+  </div>
+</main>
+
+<script>
+(function(){
+  var PH = {
+    trade:{n:'Торговля',c:'var(--p-trade)'},
+    exp:{n:'Экспансия',c:'var(--p-exp)'},
+    prod:{n:'Производство',c:'var(--p-prod)'},
+    army:{n:'Армия',c:'var(--p-army)'},
+    rev:{n:'Революция',c:'var(--p-rev)'}
+  };
+  var Y0 = 1495, Y1 = 1690;
+
+  var S = [
+    { y0:1495, y1:1505, ph:'trade', t:'Высадка и первый город',
+      goal:'Найти место под будущее производство и заложить первый город.',
+      mnemo:['Две клетки — одна цепочка','Нет двух клеток ресурса — не будет и производства из него.'],
+      chainTitle:'Порядок построек', chain:[['house','Домик'],['pier','Пристань'],['hall','Ратуша']],
+      steps:[
+        '<b>Ищем место:</b> минимум 2 клетки под каждый нужный ресурс. Даже если на клетке по одной единице — главное, чтобы клеток было две.',
+        'Считаем и клетки, которые город получит позже, когда вырастет.',
+        'По клеткам решаем цепочки: хлопок → ткань → крашеная ткань, табак → сигары, сахар → ром.',
+        'Ставим город.',
+        'Колонист добывает <b>15 дерева</b>.',
+        'Строим домик, колонист в нём <b>добывает колокола</b>.',
+        'Корабль сразу везёт <b>оружие индейцам</b>.',
+        'Строим пристань (под будущего рыбака), затем ратушу.'
+      ]
+    },
+    { y0:1505, y1:1540, ph:'trade', t:'Торговый круг и ядро города',
+      goal:'3–4 корабля без остановки возят оружие индейцам. В первом городе собрано ядро: колокола, еда, молотки.',
+      mnemo:['Накорми → построй → агитируй','Рыбак, плотник, лесоруб, потом маститый политик.'],
+      chainTitle:'Кого покупаем, строго по порядку', chain:[['fish','Рыбак'],['hammer','Плотник'],['axe','Лесоруб'],['quill','Маститый политик']],
+      steps:[
+        'Первые деньги — сразу в <b>ещё один корабль</b> и новую партию оружия.',
+        'Держим <b>3–4 корабля</b> в кругу: Европа → индейцы → Европа.',
+        'Из каждой сделки <b>1300 оставляем</b> на следующую партию оружия, остальное — на людей. Пример: 100 оружия ушли за 2500 → 1300 на оружие, 1200 на людей.',
+        'Плотник — на молотки, лесоруб — на дерево, рыбак — на пристань.',
+        'Плотник достраивает ратушу. Колонист переходит в ратушу на колокола.',
+        'Покупаем <b>маститого политика</b>: быстрее колокола и отцы-основатели.',
+        'Одного человека отправляем по индейским деревням: <b>здоровается и узнаёт</b>, кого где обучают.',
+        'Исследуем карту, ищем новых индейцев.',
+        'Не тратимся на лишние постройки и людей.'
+      ],
+      fathers:['Отец-основатель с <b>разведчиком</b> — берём: разведчик ходит дальше, заходит в курганы и деревни, собирает монеты.'],
+      target:{ title:'К 1530 в первом городе', cities:[{ name:'Город 1', rows:[
+        ['quill','Маститый политик','1'],['bell','Колонист в ратуше','1'],['hammer','Плотник','1'],['axe','Лесоруб','1'],['fish','Рыбак','1–2']
+      ]}]}
+    },
+    { y0:1540, y1:1570, ph:'exp', t:'Второй город и лесопилка',
+      goal:'Заложить второй город по той же схеме и построить лесопилку в первом.',
+      mnemo:['Без лесопилки нет мэрии','Лесопилку ставим в первом городе к 1560.'],
+      chainTitle:'Второй город: тот же порядок', chain:[['house','Домик'],['pier','Пристань'],['hall','Ратуша']],
+      steps:[
+        'Ищем место и ставим <b>второй город</b>. Первым делом домик и колонист на колокола.',
+        'В первом городе строим <b>лесопилку</b>.',
+        'Докупаем <b>второго плотника</b>: двое строят вдвое быстрее.',
+        'Не хватает дерева — <b>второй лесоруб</b>.',
+        'Добавляем рыбака: каждый работник ест <b>2 еды за ход</b>.',
+        'Инструменты для ратуши и лесопилки везём <b>своим кораблём из Европы</b>: в городе они вдвое дороже.',
+        'Торговля и разведка идут фоном. Обычно к этому времени открыта половина карты.'
+      ],
+      target:{ title:'К 1560', cities:[
+        { name:'Город 1', sub:'ратуша, лесопилка', rows:[
+          ['quill','Маститый политик','1+'],['bell','Колонист в ратуше','1'],['hammer','Плотник','2'],['axe','Лесоруб','2'],['fish','Рыбак','2–3']
+        ]},
+        { name:'Город 2', sub:'домик', rows:[
+          ['bell','Колонист на колоколах','1'],['hd','Желательно, можно в ближайшие 10–15 лет'],
+          ['hammer','Плотник','1','opt'],['axe','Лесоруб','1','opt'],['fish','Рыбак','2','opt']
+        ]}
+      ]}
+    },
+    { y0:1570, y1:1600, ph:'prod', t:'Запуск производства',
+      goal:'Перейти на собственный доход: улучшенные клетки, здания переработки, специалисты на добыче.',
+      mnemo:['Клетка → здание → человек','На базовых клетках производство не разогнать.'],
+      chainTitle:'Последовательность', chain:[['pick','Улучшить клетки'],['factory','Здание переработки'],['person','Специалисты']],
+      steps:[
+        'Покупаем <b>отважного первопроходца</b>, если не получилось раньше. 1–2 первопроходца улучшают клетки без перерыва.',
+        'Строим <b>здания переработки</b> под наши цепочки.',
+        'Готовое здание — сразу везём людей на добычу и производство.',
+        'На добычу ставим специалистов: <b>обученных у индейцев</b> или купленных в Европе.',
+        'Докупаем недостающих людей.',
+        'Деньги у индейцев заканчиваются — переходим на <b>самообеспечение</b>.'
+      ],
+      facts:[['×2','опытный специалист (например, сахарный плантатор)'],['×1,5','обычный фермер из Европы'],['1000–2000','экономия на каждом, кого обучили индейцы']],
+      fathers:['<b>Отважные первопроходцы</b> — берём.','<b>2 галеона</b> — берём, торговля пойдёт быстрее.'],
+      target:{ title:'К 1600', note:'В первом городе минимум <b>2 товара</b> производятся постоянно. Во втором городе начинаем выстраивать производство.' }
+    },
+    { y0:1600, y1:1630, ph:'prod', t:'Мэрии и второй город догоняет',
+      goal:'Довести стартовое производство, продавать его постоянно и подтянуть второй город до уровня первого.',
+      mnemo:['Мэрия = колокола = независимость','Маститые политики сидят в мэрии.'],
+      steps:[
+        'Улучшаем ратуши до <b>мэрий</b> в обоих городах.',
+        'В каждом городе <b>2 плотника</b> и еды на всех — довозим рыбаков.',
+        'В мэрии ставим дополнительных <b>маститых политиков</b>.',
+        'Своё производство продаём на постоянной основе.',
+        'Второй город доводим до уровня первого.',
+        'Во втором городе закладываем основу под <b>трёхфакторное производство</b>.',
+        'Деньги у индейцев ещё есть — торговля продолжается.'
+      ],
+      target:{ title:'К 1620', note:'В обоих городах <b>+25…+30</b> по двухкомпонентным товарам.' }
+    },
+    { y0:1630, y1:1650, ph:'prod', t:'Трёхфакторное производство и +50',
+      goal:'Запустить трёхфакторную цепочку и довести двухкомпонентное производство до +50.',
+      mnemo:['Всё на +50 — или дворец','Строить больше нечего, а колоколов мало — значит дворец правительства.'],
+      steps:[
+        'Ставим <b>трёхфакторное производство</b>.',
+        'Двухкомпонентное доводим до <b>+50</b>.',
+        'Доулучшаем клетки, довозим людей на добычу и производство.',
+        'Проверяем: <b>обе мэрии</b> построены.',
+        'Всё построено, но не хватает колоколов и процента независимости — строим <b>дворец правительства</b>.',
+        'Материалы для построек везём сами из Европы — дешевле, чем платить через город.'
+      ]
+    },
+    { y0:1650, y1:1670, ph:'army', t:'Полный состав и закупка войск',
+      goal:'Производство выстроено, торговля постоянная. Начинаем закупать линейную пехоту и артиллерию.',
+      mnemo:['2 · 2 · 3 = +50','2 улучшенные клетки, 2 опытных добытчика, 3 работника в цеху.'],
+      steps:[
+        'Индейцам почти ничего не продаём: <b>скупаем у них мех и товары</b> и перепродаём в Европе.',
+        'Корабли простаивают — пару можно продать. Остальные возят товар до конца игры.',
+        'Начинаем закупать <b>линейную пехоту</b> и <b>артиллерию</b>.',
+        'Довозим людей в города.'
+      ],
+      target:{ title:'К 1650–1660', cities:[
+        { name:'Город 1', sub:'основа', rows:[
+          ['quill','Маститый политик','4'],['hammer','Плотник','2–3'],['axe','Лесоруб на улучшенных клетках','2'],['fish','Рыбак','4–5']
+        ]},
+        { name:'Пример: ром +50', sub:'так по каждому товару', rows:[
+          ['crop','Улучшенная клетка сахара','2'],['person','Опытный сахарный плантатор','2'],['barrel','Винокур','3']
+        ]}
+      ]}
+    },
+    { y0:1670, y1:1680, ph:'army', t:'Подготовка к революции',
+      goal:'Перед объявлением независимости проходим чек-лист обороны.',
+      mnemo:['13 · 2 · 50','Пехота на город, пушки на город, оружие на ополченца.'],
+      steps:[
+        'В каждом городе <b>12–13 линейной пехоты</b>.',
+        'В каждом городе <b>2 артиллерии</b>.',
+        'Оружие куплено и развезено по городам для <b>15–20 ополченцев</b>: по 50 на человека, всего 750–1000.',
+        'Ополченцы — из тех, кто стоял на добыче и производстве.',
+        '<b>Медик переведён в гарнизон.</b> В здании он воинов не лечит.',
+        'Оставлено минимальное производство, чтобы тихо торговать с Европой.',
+        'Корабль свободен, чтобы возить оружие из Европы.'
+      ],
+      facts:[['12–13','линейной пехоты на город'],['2','артиллерии на город'],['50','оружия на ополченца'],['15–20','ополченцев всего']]
+    },
+    { y0:1680, y1:1690, ph:'rev', t:'Революция и оборона',
+      goal:'Объявляем независимость и держим оборону около 10 лет. Защита важнее производства.',
+      mnemo:['Медик — в строй, а не в дом','Лечит 10% здоровья каждого юнита за ход только из гарнизона.'],
+      steps:[
+        'Объявляем независимость.',
+        'Постоянно возим оружие из Европы и вооружаем всё больше ополченцев.',
+        'Войска резко тают — <b>снимаем всех</b> с производства и добычи в гарнизон.',
+        'Прокачка: сначала <b>народное ополчение</b>, потом медик.',
+        'Падение здоровья города не страшно — медик всё равно нужен в гарнизоне.',
+        'Держимся около 10 лет.'
+      ],
+      facts:[['10','защиты даёт линейная пехота'],['2','защиты даёт житель в гарнизоне'],['5 ≈ 1','пять жителей заменяют одну пехоту'],['10%','лечит медик за ход']],
+      target:{ title:'Победа', note:'По идеальному сценарию — <b>1680–1690</b>.' }
+    }
+  ];
+
+  var $ = function(id){ return document.getElementById(id); };
+  var rng = $('rng'), card = $('card');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var checks = {};
+  try { checks = JSON.parse(localStorage.getItem('colz-checks') || '{}') || {}; } catch(e) { checks = {}; }
+  function saveChecks(){ try { localStorage.setItem('colz-checks', JSON.stringify(checks)); } catch(e){} }
+
+  function pct(y){ return (y - Y0) / (Y1 - Y0) * 100; }
+  function stageIdx(y){ var i = 0; for (var k = 0; k < S.length; k++) if (S[k].y0 <= y) i = k; return i; }
+  function ic(id){ return '<svg class="ic" aria-hidden="true"><use href="#' + id + '"/></svg>'; }
+
+  /* phase-coloured track and stage ticks */
+  (function(){
+    var stops = [], prev = null;
+    S.forEach(function(s){
+      if (prev && prev.ph === s.ph) { prev.to = s.y1; return; }
+      prev = { ph:s.ph, from:s.y0, to:s.y1 }; stops.push(prev);
+    });
+    $('track').style.background = 'linear-gradient(90deg,' + stops.map(function(p){
+      return PH[p.ph].c + ' ' + pct(p.from).toFixed(2) + '% ' + pct(p.to).toFixed(2) + '%';
+    }).join(',') + ')';
+    $('ticks').innerHTML = S.slice(1).map(function(s){ return '<i style="left:' + pct(s.y0).toFixed(2) + '%"></i>'; }).join('');
+  })();
+
+  /* route overview */
+  $('route').innerHTML = S.map(function(s, i){
+    return '<li><button type="button" data-i="' + i + '"><span class="yr">' + s.y0 + '–' + s.y1 + '</span><span class="dot" style="background:' + PH[s.ph].c + '"></span><span class="nm">' + s.t + '</span></button></li>';
+  }).join('');
+
+  function doneCount(i){ var n = 0; S[i].steps.forEach(function(_, j){ if (checks['c' + i + '-' + j]) n++; }); return n; }
+
+  function renderCard(i){
+    var s = S[i], h = [];
+    h.push('<div class="shead"><div class="meta"><span>Этап ' + (i + 1) + ' из ' + S.length + ' · ' + s.y0 + '–' + s.y1 + '</span><span class="prog" id="prog">' + doneCount(i) + '/' + s.steps.length + ' сделано</span></div><h1>' + s.t + '</h1></div>');
+    h.push('<p class="goal">' + s.goal + '</p>');
+    h.push('<div class="mnemo"><small>Запомни</small><p>' + s.mnemo[0] + '</p><span>' + s.mnemo[1] + '</span></div>');
+    if (s.chain) {
+      h.push('<div class="blk"><h2>' + s.chainTitle + '</h2><div class="chain">' + s.chain.map(function(c){
+        return '<span class="chip">' + ic(c[0]) + c[1] + '</span>';
+      }).join('<span class="arr" aria-hidden="true">→</span>') + '</div></div>');
+    }
+    h.push('<div class="blk"><h2>Что делаем</h2><ol class="steps">' + s.steps.map(function(t, j){
+      var id = 'c' + i + '-' + j;
+      return '<li><label><input type="checkbox" id="' + id + '"' + (checks[id] ? ' checked' : '') + '><span>' + t + '</span></label></li>';
+    }).join('') + '</ol></div>');
+    if (s.facts) {
+      h.push('<div class="blk"><h2>Цифры этапа</h2><div class="facts">' + s.facts.map(function(f){
+        return '<div class="fact"><b>' + f[0] + '</b><span>' + f[1] + '</span></div>';
+      }).join('') + '</div></div>');
+    }
+    if (s.fathers) {
+      h.push('<div class="blk"><h2>Отцы-основатели</h2><div class="list">' + s.fathers.map(function(f){
+        return '<div class="row">' + ic('star') + '<span>' + f + '</span></div>';
+      }).join('') + '</div></div>');
+    }
+    if (s.target) {
+      var t = s.target, th = '<div class="target"><h2 style="margin:0">' + t.title + '</h2>';
+      if (t.cities) {
+        th += '<div class="cities">' + t.cities.map(function(c){
+          return '<div class="city"><h3>' + c.name + (c.sub ? '<small>' + c.sub + '</small>' : '') + '</h3>' + c.rows.map(function(r){
+            if (r[0] === 'hd') return '<div class="ros hd">' + r[1] + '</div>';
+            return '<div class="ros' + (r[3] ? ' opt' : '') + '">' + ic(r[0]) + '<span>' + r[1] + '</span><b>×' + r[2] + '</b></div>';
+          }).join('') + '</div>';
+        }).join('') + '</div>';
+      }
+      if (t.note) th += '<p class="tnote">' + t.note + '</p>';
+      h.push(th + '</div>');
+    }
+    card.innerHTML = h.join('');
+    if (!reduce && card.animate) card.animate([{opacity:.35, transform:'translateY(6px)'},{opacity:1, transform:'none'}], {duration:220, easing:'ease-out'});
+  }
+
+  var cur = -1;
+  function render(){
+    var y = +rng.value, i = stageIdx(y), s = S[i];
+    $('yr').textContent = y;
+    if (i === cur) return;
+    cur = i;
+    $('yrRange').textContent = s.y0 + '–' + s.y1;
+    $('phDot').style.background = PH[s.ph].c;
+    $('phName').textContent = PH[s.ph].n;
+    $('stNo').textContent = 'Этап ' + (i + 1) + '/' + S.length;
+    $('hTitle').textContent = s.t;
+    $('prev').disabled = i === 0;
+    $('next').disabled = i === S.length - 1;
+    document.querySelectorAll('#route button').forEach(function(b){
+      if (+b.dataset.i === i) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    });
+    renderCard(i);
+  }
+  function go(i, scroll){
+    i = Math.max(0, Math.min(S.length - 1, i));
+    rng.value = S[i].y0; render();
+    try { localStorage.setItem('colz-year', rng.value); } catch(e){}
+    if (scroll) window.scrollTo({top:0, behavior: reduce ? 'auto' : 'smooth'});
+  }
+
+  rng.addEventListener('input', render);
+  rng.addEventListener('change', function(){ try { localStorage.setItem('colz-year', rng.value); } catch(e){} });
+  $('prev').addEventListener('click', function(){ go(cur - 1); });
+  $('next').addEventListener('click', function(){ go(cur + 1); });
+  $('route').addEventListener('click', function(e){ var b = e.target.closest('button[data-i]'); if (b) go(+b.dataset.i, true); });
+  card.addEventListener('change', function(e){
+    if (e.target.type !== 'checkbox') return;
+    if (e.target.checked) checks[e.target.id] = 1; else delete checks[e.target.id];
+    saveChecks();
+    var p = $('prog'); if (p) p.textContent = doneCount(cur) + '/' + S[cur].steps.length + ' сделано';
+  });
+  $('reset').addEventListener('click', function(){
+    checks = {}; saveChecks();
+    card.querySelectorAll('input[type=checkbox]').forEach(function(c){ c.checked = false; });
+    var p = $('prog'); if (p) p.textContent = '0/' + S[cur].steps.length + ' сделано';
+  });
+
+  try { var sy = +localStorage.getItem('colz-year'); if (sy >= Y0 && sy <= Y1) rng.value = sy; } catch(e){}
+  render();
+})();
+</script>
+
+</html>
